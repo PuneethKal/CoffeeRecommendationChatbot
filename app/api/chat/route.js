@@ -60,7 +60,8 @@ export async function POST(req) {
         } finally {
           controller.close();
         }
-        return new NextResponse(stream);
-      }
+       
+      },
     })
+    return new NextResponse(stream)
 }
