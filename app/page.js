@@ -1,15 +1,18 @@
 'use client'
-import { Box, Stack, TextField, Button, Typography, AccountCircle, InputAdornment } from "@mui/material";
-import { useState } from 'react';
-
+import { Box, Stack, TextField, Button, Typography, AccountCircle, Drawer } from "@mui/material";
+import { useState, useEffect } from 'react';
+import ChatDrawer from "./ChatDrawer/page";
 
 export default function Home() {
   const color1 = "#e5f1f7"
+  const [feedbackfield, setFeedbackField] = useState("")
   const [messages, setMessages] = useState([{
     role: 'assistant',
     content: `Hi I'm the Headstarter Support Agent, how can I assist you today?`,
   }]);
   const [message, setMessage] = useState('');
+
+  const [isOpen, setIsOpen] = useState(true);
 
   const getRAGContext = async (query) => {
     try {
@@ -34,11 +37,11 @@ export default function Home() {
     }
   }
 
-  const sendMessage = async () => {
-    setMessage('')  // Clear the input field
+  const sendMessage = async (msg = message) => {
+    // setMessage('')  // Clear the input field
     setMessages((messages) => [
       ...messages,
-      { role: 'user', content: message },  // Add the user's message to the chat
+      { role: 'user', content: msg },  // Add the user's message to the chat
       { role: 'assistant', content: '' },  // Add a placeholder for the assistant's response
     ])
 
@@ -48,7 +51,7 @@ export default function Home() {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify([...messages, { role: 'user', content: getRAGContext(message) }]),
+      body: JSON.stringify([...messages, { role: 'user', content: getRAGContext(msg) }]),
     }).then(async (res) => {
       const reader = res.body.getReader()  // Get a reader to read the response body
       const decoder = new TextDecoder()  // Create a decoder to decode the response text
@@ -73,6 +76,17 @@ export default function Home() {
     })
   }
 
+  const handleSendMessage = (newMessage) => {
+    // Update the state with the new message
+    setMessage(newMessage);
+    sendMessage(newMessage)
+    // console.log("Message from ChatDrawer:", message);
+  };
+
+  const handleFeedbackClick = (msg) =>{
+    //Sends feedback
+    setFeedbackField("")
+  }
 
   return (
     <Box
@@ -81,17 +95,58 @@ export default function Home() {
       bgcolor={"#dbecf5"}
       padding={"20px"}
       display={"flex"}
+      justifyContent={"center"}
       flexDirection={"row"}
+      flexWrap={"revert-layer"}
       gap={4}
+      overflow={"auto"}
     >
-      <Box
-        width={"25%"}
+      <Drawer
+        anchor="left"
+        open={isOpen}
+        onClose={() => setIsOpen(false)}
         height={"100%"}
+      >
+        <Box
+          sx={{
+            width: '30vw',
+            padding: 2,
+            borderTopLeftRadius: 20,
+            borderTopRightRadius: 20,
+          }}
+        >
+          <Box bgcolor={color1} height={"10vh"}></Box>
+          <Box height={"50vh"}>
+
+          </Box>
+          <Typography variant="h6">Give Feedback</Typography>
+          <TextField
+            fullWidth
+            multiline
+            minRows={"5"}
+            value={feedbackfield}
+            onChange={(e) => {setFeedbackField(e.target.value)}}
+          ></TextField>
+          <Button height={"10vh"} fullWidth onClick={handleFeedbackClick}>→</Button>
+        </Box>
+
+      </Drawer>
+      {/* Drawer Button */}
+      <Box
+        position={"absolute"}
+        top={"20px"}
+        left={"0px"}
+        width={"5%"}
+        height={"95%"}
         bgcolor={"white"}
         borderRadius={"10px"}
         boxShadow={"10"}
       >
+        <Button fullWidth onClick={() => setIsOpen(true)}>
+          <Typography variant="h3" color={"black"}>☰</Typography>
+        </Button>
       </Box>
+
       <Box
         width={"75%"}
         height={"100%"}
@@ -145,14 +200,31 @@ export default function Home() {
                   display='flex' justifyContent={
                     message.role === 'assistant' ? 'flex-start' : 'flex-end'
                   }>
-                  <Box display={"flex"} flexWrap={"wrap"} maxWidth={"60%"} bgcolor={
-                    message.role === 'assistant' ? 'primary.main' : 'secondary.main'
-                  }
-                    color='white'
+                  <Box display={"flex"} flexWrap={"wrap"} maxWidth={"60%"}
+                    color="white"
                     borderRadius={4}
-                    p={3}
+                    p={1}
+                    sx={{
+                      background: message.role === 'assistant'
+                        ? 'linear-gradient(135deg, #6366F1 0%, #8B5CF6 100%)'
+                        : 'linear-gradient(135deg, #10B981 0%, #3B82F6 100%)',
+                      color: 'white',
+                      borderRadius: '12px',
+                      padding: '16px',
+                      boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08)',
+                      transition: 'all 0.3s ease',
+                      '&:hover': {
+                        transform: 'translateY(-2px)',
+                        boxShadow: '0 7px 14px rgba(0, 0, 0, 0.1), 0 3px 6px rgba(0, 0, 0, 0.08)',
+                      },
+                    }}
+
                   >
-                    <Typography variant="body1" word-wrap="break-word">
+                    <Typography variant="body1" sx={{
+                      overflowWrap: 'break-word',
+                      wordBreak: 'break-word',
+                      hyphens: 'auto',
+                    }}>
                       {message.content}
                     </Typography>
 
@@ -162,41 +234,8 @@ export default function Home() {
             }
           </Stack>
         </Box>
-        <Box
-          height={"10%"}
-          minHeight={"100px"}
-          maxHeight={"140px"}
-          width={"100%"}
-          padding={"20px"}
-          display={"flex"}
-          alignItems={"end"}
-          justifyContent={"end"}
-        >
-          <Box
-            width={"100%"}
-            height={"100%"}
-            bgcolor={color1}
-            borderRadius={"20px"}
-            overflow={"hidden"}
-            display={"flex"}
-            alignItems={"center"}
-            justifyContent={"center"}
-          >
-            <TextField
-              multiline
-              maxRows={4}
-              label='message'
-              fullWidth
-              value={message}
-              onChange={(e) => setMessage(e.target.value)}
-            >
-            </TextField>
-            <Button
-              onClick={sendMessage}
-            >
-              Send
-            </Button>
-          </Box>
+        <Box maxWidth={"100%"} display={"flex"} justifyContent={"center"} alignItems={"center"}>
+          <ChatDrawer onSendMessage={handleSendMessage}></ChatDrawer>
         </Box>
       </Box>
     </Box>
