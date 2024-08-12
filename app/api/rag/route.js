@@ -29,10 +29,12 @@ export async function POST(req) {
     // get top matches relating to query
     const top_matches = await pinecone_index.namespace('youtube-videos-2').query({ vector: query_embedding, topK: 3, includeMetadata: true })
 
-    console.log(top_matches)
+    // console.log(top_matches)
 
-    // Reterive context data from metadata
-    const contexts = top_matches.matches.map(item => item.metadata.text);
+    // Reterive context data from metadata and filter out anything below 0.7 similarity
+    const contexts = top_matches.matches
+        .filter(item => item.score > 0.8)
+        .map(item => item.metadata.text);
 
     // console.log(contexts)
 
@@ -46,7 +48,7 @@ ${contexts.slice(0, 10).join('\n\n-------\n\n')}
 MY QUESTION:
 ${query}`;
 
-// console.log(augmented_query)
+    // console.log(augmented_query)
 
     return new NextResponse(augmented_query)
 }

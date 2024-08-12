@@ -11,6 +11,29 @@ export default function Home() {
   }]);
   const [message, setMessage] = useState('');
 
+  const getRAGContext = async (query) => {
+    try {
+      const response = await fetch('/api/rag', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(query),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const result = await response.text();
+      // console.log(result);
+      return result;
+    } catch (error) {
+      console.error("There was a problem with the fetch operation:", error);
+      throw error;
+    }
+  }
+
   const sendMessage = async () => {
     setMessage('')  // Clear the input field
     setMessages((messages) => [
@@ -25,7 +48,7 @@ export default function Home() {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify([...messages, { role: 'user', content: message }]),
+      body: JSON.stringify([...messages, { role: 'user', content: getRAGContext(message) }]),
     }).then(async (res) => {
       const reader = res.body.getReader()  // Get a reader to read the response body
       const decoder = new TextDecoder()  // Create a decoder to decode the response text
@@ -115,7 +138,7 @@ export default function Home() {
             width={"100%"}
             overflow={"auto"}
             maxHeight='100%'
-            >
+          >
             {
               messages.map((message, index) => (
                 <Box key={index} alignItems={"center"}
@@ -130,9 +153,9 @@ export default function Home() {
                     p={3}
                   >
                     <Typography variant="body1" word-wrap="break-word">
-                      {message.content} 
+                      {message.content}
                     </Typography>
-                    
+
                   </Box>
                 </Box>
               ))
