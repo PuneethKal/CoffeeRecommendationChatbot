@@ -12,7 +12,7 @@ export default function Home() {
   }]);
   const [message, setMessage] = useState('');
 
-  const [isOpen, setIsOpen] = useState(true);
+  const [isOpen, setIsOpen] = useState(false);
 
   const getRAGContext = async (query) => {
     try {
@@ -29,7 +29,6 @@ export default function Home() {
       }
 
       const result = await response.text();
-      // console.log(result);
       return result;
     } catch (error) {
       console.error("There was a problem with the fetch operation:", error);
@@ -51,7 +50,7 @@ export default function Home() {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify([...messages, { role: 'user', content: getRAGContext(msg) }]),
+      body: JSON.stringify([...messages, { role: 'user', content: `${ await getRAGContext(msg)}` }]),
     }).then(async (res) => {
       const reader = res.body.getReader()  // Get a reader to read the response body
       const decoder = new TextDecoder()  // Create a decoder to decode the response text
@@ -80,7 +79,6 @@ export default function Home() {
     // Update the state with the new message
     setMessage(newMessage);
     sendMessage(newMessage)
-    // console.log("Message from ChatDrawer:", message);
   };
 
   const handleFeedbackClick = (msg) =>{

@@ -32,9 +32,10 @@ Encourage users and provide positive reinforcement to boost their confidence in 
 
 export async function POST(req) {
     console.log('POST /api/chat')
-    //const data = await req.json()
     const openai = new OpenAI();
     const data = await req.json();
+
+    // return
     const completion = await openai.chat.completions.create({
       messages: [
           {role: "system", content: systemPrompt},

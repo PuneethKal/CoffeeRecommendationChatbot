@@ -33,12 +33,16 @@ export async function POST(req) {
 
     // Reterive context data from metadata and filter out anything below 0.7 similarity
     const contexts = top_matches.matches
-        .filter(item => item.score > 0.8)
+        .filter(item => item.score > 0.81)
         .map(item => item.metadata.text);
 
     // console.log(contexts)
 
     //Final query with the context from rag process
+
+    if (contexts.length == 0){
+        return NextResponse.json(query)
+    }
     const augmented_query = `<CONTEXT>
 ${contexts.slice(0, 10).join('\n\n-------\n\n')}
 -------
@@ -50,5 +54,5 @@ ${query}`;
 
     // console.log(augmented_query)
 
-    return new NextResponse(augmented_query)
+    return NextResponse.json(augmented_query)
 }
