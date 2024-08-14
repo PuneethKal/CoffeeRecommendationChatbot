@@ -9,7 +9,7 @@ export default function Home() {
   const [feedbackfield, setFeedbackField] = useState("")
   const [messages, setMessages] = useState([{
     role: 'assistant',
-    content: `Hi I'm the Brian Brew, how can I assist you today?`,
+    content: `Hi I'm the Coffee Brew GPT, how can I assist you today?`,
   }]);
   const [message, setMessage] = useState('');
 
@@ -166,7 +166,7 @@ export default function Home() {
           width={"100%"}
           height={"10%"}
           minHeight={"60px"}
-          bgcolor={color1}
+          bgcolor={"#F3E9DC"}
           padding={"0 20px 0 20px"}
           display={"flex"}
           flexDirection={"row"}
@@ -176,7 +176,7 @@ export default function Home() {
         >
           <img src="/resources/img/coffeeicon.png" width={"50px"}></img>
           <Typography variant="h3" color={"black"} fontFamily={"Comic Sans MS, Comic Sans, cursive"} whiteSpace="nowrap">
-            Brian Brew
+            Coffee Brew GPT
           </Typography>
           <Typography variant="h3" color={"black"} fontFamily={"Helvetica"}>
             |
@@ -211,9 +211,9 @@ export default function Home() {
                     p={1}
                     sx={{
                       background: message.role === 'assistant'
-                        ? 'linear-gradient(135deg, #6366F1 0%, #8B5CF6 100%)'
-                        : 'linear-gradient(135deg, #10B981 0%, #3B82F6 100%)',
-                      color: 'white',
+                        ? 'linear-gradient(135deg, #c08552 0%, #8B5CF6 100%)'
+                        : 'linear-gradient(135deg, #895726 0%, #3B82F6 100%)',
+                      color: "#F3E9DC",
                       borderRadius: '12px',
                       padding: '16px',
                       boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08)',
@@ -239,7 +239,7 @@ export default function Home() {
             }
           </Stack>
         </Box>
-        <Box maxWidth={"100%"} display={"flex"} justifyContent={"center"} alignItems={"center"}>
+        <Box marginBottom={"1vh"} maxWidth={"100%"} display={"flex"} justifyContent={"center"} alignItems={"center"}>
           <ChatDrawer onSendMessage={handleSendMessage}></ChatDrawer>
         </Box>
       </Box>
