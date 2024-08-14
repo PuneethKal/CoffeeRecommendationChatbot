@@ -2,13 +2,14 @@
 import { Box, Stack, TextField, Button, Typography, AccountCircle, Drawer } from "@mui/material";
 import { useState, useEffect } from 'react';
 import ChatDrawer from "./ChatDrawer/page";
+import Image from "next/image";
 
 export default function Home() {
   const color1 = "#e5f1f7"
   const [feedbackfield, setFeedbackField] = useState("")
   const [messages, setMessages] = useState([{
     role: 'assistant',
-    content: `Hi I'm the Headstarter Support Agent, how can I assist you today?`,
+    content: `Hi I'm the Brian Brew, how can I assist you today?`,
   }]);
   const [message, setMessage] = useState('');
 
@@ -50,7 +51,7 @@ export default function Home() {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify([...messages, { role: 'user', content: `${ await getRAGContext(msg)}` }]),
+      body: JSON.stringify([...messages, { role: 'user', content: `${await getRAGContext(msg)}` }]),
     }).then(async (res) => {
       const reader = res.body.getReader()  // Get a reader to read the response body
       const decoder = new TextDecoder()  // Create a decoder to decode the response text
@@ -81,7 +82,7 @@ export default function Home() {
     sendMessage(newMessage)
   };
 
-  const handleFeedbackClick = (msg) =>{
+  const handleFeedbackClick = (msg) => {
     //Sends feedback
     setFeedbackField("")
   }
@@ -90,15 +91,21 @@ export default function Home() {
     <Box
       width='100vw'
       height='100vh'
-      bgcolor={"#dbecf5"}
       padding={"20px"}
       display={"flex"}
       justifyContent={"center"}
       flexDirection={"row"}
-      flexWrap={"revert-layer"}
+      // flexWrap={""}
       gap={4}
       overflow={"auto"}
+
+    sx={{
+      backgroundImage:`url('/resources/img/bg1.jpg')`,
+      backgroundRepeat: "no-repeat",
+      backgroundSize: "cover",
+      }}
     >
+
       <Drawer
         anchor="left"
         open={isOpen}
@@ -123,7 +130,7 @@ export default function Home() {
             multiline
             minRows={"5"}
             value={feedbackfield}
-            onChange={(e) => {setFeedbackField(e.target.value)}}
+            onChange={(e) => { setFeedbackField(e.target.value) }}
           ></TextField>
           <Button height={"10vh"} fullWidth onClick={handleFeedbackClick}>→</Button>
         </Box>
@@ -146,7 +153,7 @@ export default function Home() {
       </Box>
 
       <Box
-        width={"75%"}
+        width={"60%"}
         height={"100%"}
         bgcolor={"white"}
         borderRadius={"10px"}
@@ -167,15 +174,15 @@ export default function Home() {
           gap={1}
 
         >
-          <img src="favicon.ico" width={"50px"}></img>
+          <img src="/resources/img/coffeeicon.png" width={"50px"}></img>
           <Typography variant="h3" color={"black"} fontFamily={"Comic Sans MS, Comic Sans, cursive"} whiteSpace="nowrap">
-            BILL AI
+            Brian Brew
           </Typography>
           <Typography variant="h3" color={"black"} fontFamily={"Helvetica"}>
             |
           </Typography>
-          <Typography flexWrap={"wrap"} variant="h6" color={"black"} fontFamily={"Comic Sans MS, Comic Sans, cursive"}>
-            Headstar AI assistant to assist your needs!
+          <Typography flexWrap={"wrap"} variant="body_1" color={"black"} fontFamily={"Comic Sans MS, Comic Sans, cursive"}>
+            Your friendly and supportive coffee companion who is always ready to help with brewing tips and recommendations.
           </Typography>
         </Box>
         <Box
