@@ -54,7 +54,6 @@ export async function POST(req) {
     const openai = new OpenAI();
     const data = await req.json();
 
-    // return
     const completion = await openai.chat.completions.create({
       messages: [
           {role: "system", content: systemPrompt},

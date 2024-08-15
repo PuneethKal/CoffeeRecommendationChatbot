@@ -27,7 +27,7 @@ export async function POST(req) {
     const pinecone_index = pc.index('multilingualmodel');
 
     // get top matches relating to query
-    const top_matches = await pinecone_index.namespace('youtube-videos-2').query({ vector: query_embedding, topK: 3, includeMetadata: true })
+    const top_matches = await pinecone_index.namespace('coffee-data').query({ vector: query_embedding, topK: 3, includeMetadata: true })
 
     // console.log(top_matches)
 
