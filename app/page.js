@@ -1,12 +1,13 @@
 'use client'
-import { Box, Stack, TextField, Button, Typography, AccountCircle, Drawer } from "@mui/material";
+import { Box, Stack, TextField, Button, Typography, Drawer, ListItem, Divider, useTheme, useMediaQuery } from "@mui/material";
 import { useState, useEffect } from 'react';
 import ChatDrawer from "./ChatDrawer/page";
 import Image from "next/image";
 
 export default function Home() {
   const color1 = "#e5f1f7"
-  const [feedbackfield, setFeedbackField] = useState("")
+  const darkBrown = "#4B371C"
+  const [feedbackField, setFeedbackField] = useState("")
   const [messages, setMessages] = useState([{
     role: 'assistant',
     content: `Hi I'm the Coffee Brew GPT, how can I assist you today?`,
@@ -14,6 +15,25 @@ export default function Home() {
   const [message, setMessage] = useState('');
 
   const [isOpen, setIsOpen] = useState(false);
+
+  const theme = useTheme();
+  const isXsScreen = useMediaQuery(theme.breakpoints.only('xs'));
+  const isSmScreen = useMediaQuery(theme.breakpoints.only('sm'));
+  const isMdScreen = useMediaQuery(theme.breakpoints.only('md'));
+
+  const getTitleSize = () => {
+    if (isXsScreen) return '0.8rem';
+    if (isSmScreen) return '1rem';
+    if (isMdScreen) return '1.5rem';
+    return '3rem';
+  };
+
+  const getDescriptionSize = () => {
+    if (isXsScreen) return '0.4rem';
+    if (isSmScreen) return '0.5rem';
+    if (isMdScreen) return '0.8rem';
+    return '1rem';
+  };
 
   const getRAGContext = async (query) => {
     try {
@@ -95,14 +115,13 @@ export default function Home() {
       display={"flex"}
       justifyContent={"center"}
       flexDirection={"row"}
-      // flexWrap={""}
       gap={4}
       overflow={"auto"}
 
-    sx={{
-      backgroundImage:`url('/resources/img/bg1.jpg')`,
-      backgroundRepeat: "no-repeat",
-      backgroundSize: "cover",
+      sx={{
+        backgroundImage: `url('/resources/img/bg1.jpg')`,
+        backgroundRepeat: "no-repeat",
+        backgroundSize: "cover",
       }}
     >
 
@@ -110,50 +129,90 @@ export default function Home() {
         anchor="left"
         open={isOpen}
         onClose={() => setIsOpen(false)}
-        height={"100%"}
       >
         <Box
           sx={{
-            width: '30vw',
-            padding: 2,
-            borderTopLeftRadius: 20,
-            borderTopRightRadius: 20,
+            width: { xs: '80vw', sm: '50vw', md: '30vw' },
+            height: '100%',
+            display: 'flex',
+            flexDirection: 'column',
+            bgcolor: "#F3E9DC",
           }}
         >
-          <Box bgcolor={color1} height={"10vh"}></Box>
-          <Box height={"50vh"}>
-
+          <Box bgcolor={darkBrown} color={"#F3E9DC"} p={2} pb={1}>
+            <Typography variant="h5">Coffee Bot Assistant</Typography>
           </Box>
-          <Typography variant="h6">Give Feedback</Typography>
-          <TextField
-            fullWidth
-            multiline
-            minRows={"5"}
-            value={feedbackfield}
-            onChange={(e) => { setFeedbackField(e.target.value) }}
-          ></TextField>
-          <Button height={"10vh"} fullWidth onClick={handleFeedbackClick}>→</Button>
-        </Box>
 
+          <Box bgcolor={darkBrown} color={"#F3E9DC"} pl={4} pb={2} pr={4}>
+            <Typography variant="body2">Coffee Brew GPT is a coffee assistant bot designed to cater to all your coffee needs. Please feel free to give feedback and rate your experience.”</Typography>
+          </Box>
+
+          
+
+          <Divider />
+
+          <Box flex={1} p={2} sx={{ overflowY: 'auto' }}>
+            <Typography variant="h6" gutterBottom>Chat with Coffee Bot</Typography>
+          </Box>
+
+          <Divider />
+
+          <Box p={2}>
+            <Typography variant="h6" gutterBottom>Give Feedback</Typography>
+            <TextField
+              fullWidth
+              multiline
+              rows={3}
+              value={feedbackField}
+              onChange={(e) => setFeedbackField(e.target.value)}
+              margin="normal"
+              variant="outlined"
+            />
+            <Button
+              fullWidth
+              variant="contained"
+              onClick={handleFeedbackClick}
+              sx={{ mt: 2, bgcolor: darkBrown, '&:hover': { bgcolor: '#61493A' } }}
+            >
+              Submit Feedback
+            </Button>
+          </Box>
+        </Box>
       </Drawer>
       {/* Drawer Button */}
       <Box
-        position={"absolute"}
-        top={"20px"}
-        left={"0px"}
-        width={"5%"}
-        height={"95%"}
-        bgcolor={"white"}
-        borderRadius={"10px"}
-        boxShadow={"10"}
+        position="fixed"
+        top={0}
+        left={-30}
+        height="100%"
+        display="flex"
+        alignItems="center"
+        zIndex={1000}
+        width={"1%"}
       >
-        <Button fullWidth onClick={() => setIsOpen(true)}>
-          <Typography variant="h3" color={"black"}>☰</Typography>
+        <Button
+          onClick={() => setIsOpen(true)}
+          size="small"
+          sx={{
+            height: "50%",
+            width: "1%",
+            bgcolor: '#F3E9DC',
+            borderTopRightRadius: 8,
+            borderBottomRightRadius: 8,
+            boxShadow: 2,
+            transition: 'all 0.3s ease-in-out',
+            '&:hover': {
+              bgcolor: '#F3E9DC',
+              transform: 'translateX(10px)',
+              boxShadow: 4,
+            },
+          }}
+        >
         </Button>
       </Box>
 
       <Box
-        width={"60%"}
+        sx={{width: { xs: '80vw', sm: '80vw', md: '60vw' }}}
         height={"100%"}
         bgcolor={"white"}
         borderRadius={"10px"}
@@ -163,28 +222,43 @@ export default function Home() {
         overflow={"hidden"}
       >
         <Box
-          width={"100%"}
-          height={"10%"}
-          minHeight={"60px"}
-          bgcolor={"#F3E9DC"}
-          padding={"0 20px 0 20px"}
-          display={"flex"}
-          flexDirection={"row"}
-          alignItems={"center"}
-          gap={1}
-
-        >
-          <img src="/resources/img/coffeeicon.png" width={"50px"}></img>
-          <Typography variant="h3" color={"black"} fontFamily={"Comic Sans MS, Comic Sans, cursive"} whiteSpace="nowrap">
-            Coffee Brew GPT
-          </Typography>
-          <Typography variant="h3" color={"black"} fontFamily={"Helvetica"}>
-            |
-          </Typography>
-          <Typography flexWrap={"wrap"} variant="body_1" color={"black"} fontFamily={"Comic Sans MS, Comic Sans, cursive"}>
-            Your friendly and supportive coffee companion who is always ready to help with brewing tips and recommendations.
-          </Typography>
-        </Box>
+      width="100%"
+      height="10%"
+      minHeight="60px"
+      bgcolor="#F3E9DC"
+      padding="0 20px"
+      display="flex"
+      flexDirection="row"
+      alignItems="center"
+      gap={1}
+    >
+      <img src="/resources/img/coffeeicon.png" width={"50px"} alt="Coffee icon" />
+      <Typography 
+        variant="h3" 
+        color="black" 
+        fontFamily="Comic Sans MS, Comic Sans, cursive" 
+        whiteSpace="nowrap"
+        sx={{ fontSize: getTitleSize() }}
+      >
+        Coffee Brew GPT
+      </Typography>
+      <Typography variant="h3" color="black" fontFamily="Helvetica" sx={{ fontSize: getTitleSize() }}>
+        |
+      </Typography>
+      <Typography 
+        variant="body1" 
+        color="black" 
+        fontFamily="Comic Sans MS, Comic Sans, cursive"
+        whiteSpace={"break-spaces"}
+        sx={{ 
+          fontSize: getDescriptionSize(),
+          flexGrow: 1,
+          textAlign: { xs: 'center', sm: 'left' }
+        }}
+      >
+        Your friendly and supportive coffee companion who is always ready to help with brewing tips and recommendations.
+      </Typography>
+    </Box>
         <Box
           bgcolor={"white"}
           width={"100%"}
@@ -226,6 +300,7 @@ export default function Home() {
 
                   >
                     <Typography variant="body1" sx={{
+                      fontSize: getDescriptionSize(),
                       overflowWrap: 'break-word',
                       wordBreak: 'break-word',
                       hyphens: 'auto',

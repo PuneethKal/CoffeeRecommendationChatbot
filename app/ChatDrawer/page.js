@@ -32,7 +32,7 @@ function ChatDrawer({onSendMessage}) {
         <Paper
             elevation={3}
             sx={{
-                width: "60%",
+                width: { xs: '70vw', sm: '50vw', md: '30vw' },
                 bottom: 0,
                 left: 0,
                 right: 0,

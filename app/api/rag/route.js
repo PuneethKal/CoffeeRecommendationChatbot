@@ -40,10 +40,9 @@ export async function POST(req) {
 
     //Final query with the context from rag process
 
-    if (contexts.length == 0){
-        return NextResponse.json(query)
-    }
-    const augmented_query = `<CONTEXT>
+    let augmented_query = query
+    if (contexts.length > 0) {
+        augmented_query = `<CONTEXT>
 ${contexts.slice(0, 10).join('\n\n-------\n\n')}
 -------
 </CONTEXT>
@@ -51,6 +50,7 @@ ${contexts.slice(0, 10).join('\n\n-------\n\n')}
 
 MY QUESTION:
 ${query}`;
+    }
 
     // console.log(augmented_query)
 
